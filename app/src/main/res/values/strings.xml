@@ -18,4 +18,5 @@
     <string name="heading_my_top_posts">My Top Posts</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_busk">Map</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 </resources>

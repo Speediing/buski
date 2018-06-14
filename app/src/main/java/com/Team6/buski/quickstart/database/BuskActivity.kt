@@ -40,8 +40,7 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
         getUsers(buskViewModel.mDatabase)
         startLocation.setOnClickListener { view ->
             setLocation(buskViewModel.mDatabase)
-            com.google.android.material.snackbar.Snackbar.make(view, "Replace with your own action", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            buskViewModel.addUsers()
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -60,7 +59,7 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        buskViewModel.map = mMap
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
