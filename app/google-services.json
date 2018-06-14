@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "947834195946",
+    "firebase_url": "https://buski-851e4.firebaseio.com",
+    "project_id": "buski-851e4",
+    "storage_bucket": "buski-851e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947834195946:android:7ca56b363e8c60f3",
+        "android_client_info": {
+          "package_name": "com.Team6.buski.quickstart.database"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947834195946-r0fleob4t0lbsoeoomgol7fha9pmq2uj.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "947834195946-r0fleob4t0lbsoeoomgol7fha9pmq2uj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIY7kCraq_hGR4qf30kT823sA7_mJ4MwQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
