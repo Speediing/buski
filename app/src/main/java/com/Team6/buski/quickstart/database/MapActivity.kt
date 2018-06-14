@@ -3,10 +3,10 @@ package com.Team6.buski.quickstart.database
 import android.Manifest
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import android.view.View
 import com.Team6.buski.quickstart.database.models.Post
 import com.google.firebase.auth.FirebaseAuth
@@ -15,8 +15,8 @@ import java.util.HashMap
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
 import android.content.pm.PackageManager
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 
 class MapActivity : AppCompatActivity() {
@@ -30,10 +30,10 @@ class MapActivity : AppCompatActivity() {
         // [START initialize_database_ref]
         val mDatabase = FirebaseDatabase.getInstance().reference
         // [END initialize_database_ref]
-        val fab = findViewById<View>(R.id.fab) as FloatingActionButton
+        val fab = findViewById<View>(R.id.fab) as com.google.android.material.floatingactionbutton.FloatingActionButton
         fab.setOnClickListener { view ->
         setLocation(mDatabase)
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+            com.google.android.material.snackbar.Snackbar.make(view, "Replace with your own action", com.google.android.material.snackbar.Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }
         initSaladMenu(mDatabase)
