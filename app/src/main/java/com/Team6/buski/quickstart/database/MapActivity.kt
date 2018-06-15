@@ -124,6 +124,7 @@ data class Salad(
         var uuid: String = "")
 
 data class User(
-        val email: String = "",
-        val username: String = "",
-        val location:String = "")
+        var email: String = "",
+        var username: String = "",
+        var location:String = "1.0:1.0",
+        var active: Boolean=false)
