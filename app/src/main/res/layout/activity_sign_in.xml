@@ -7,16 +7,22 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.google.firebase.quickstart.database.com.Team6.firebase.quickstart.database.SignInActivity">
+    tools:context="com.Team6.buski.quickstart.database.SignInActivity">
 
 
-    <ImageView
+    <TextView
         android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:src="@drawable/firebase_lockup_400" />
+        android:src="@drawable/firebase_lockup_400"
+        android:text="BUSKI"
+        android:textAlignment="center"
+        android:paddingBottom="48dp"
+        android:paddingTop="48dp"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:id="@+id/layout_email_password"

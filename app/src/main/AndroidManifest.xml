@@ -11,18 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".NewPostActivity" />
-        <activity android:name=".SignInActivity">
+            android:name=".SignInActivity"
+            android:label="Buski">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".PostDetailActivity" />
         <activity
             android:name=".MapActivity"
             android:label="@string/title_activity_map"
@@ -41,7 +38,10 @@
 
         <activity
             android:name=".BuskActivity"
-            android:label="@string/title_activity_busk"></activity>
+            android:label="Busk" />
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile"></activity>
     </application>
 
 </manifest>

@@ -2,7 +2,7 @@ package com.Team6.buski.quickstart.database;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -58,7 +58,11 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
 
         // Check auth on Activity start
         if (mAuth.getCurrentUser() != null) {
-            onAuthSuccess(mAuth.getCurrentUser());
+            String username = usernameFromEmail(mAuth.getCurrentUser().getEmail());
+
+            // Go to MainActivity
+            startActivity(new Intent(SignInActivity.this, BuskActivity.class));
+            finish();
         }
     }
 
@@ -120,9 +124,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         String username = usernameFromEmail(user.getEmail());
 
         // Write new user
-        if(getUid() == null) {
-            writeNewUser(user.getUid(), username, user.getEmail());
-        }
+        writeNewUser(user.getUid(), username, user.getEmail());
+
 
         // Go to MainActivity
         startActivity(new Intent(SignInActivity.this, BuskActivity.class));

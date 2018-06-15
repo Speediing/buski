@@ -1,15 +1,18 @@
 package com.Team6.buski.quickstart.database
 
 import android.Manifest
+import androidx.lifecycle.ViewModelProvider
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.location.LocationManager
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import android.view.Menu
 import android.view.MenuItem
 
@@ -22,20 +25,24 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.activity_busk.*
+import androidx.lifecycle.*
+import com.google.android.gms.maps.model.Marker
 
-class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
+
+class BuskActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private lateinit var mMap: GoogleMap
+    private lateinit var buskViewModel: BuskViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_busk)
-        val mDatabase = FirebaseDatabase.getInstance().reference
-        getUsers(mDatabase)
+        buskViewModel = ViewModelProviders.of(this).get(BuskViewModel::class.java)
+        buskViewModel.mDatabase = FirebaseDatabase.getInstance().reference
+        getUsers(buskViewModel.mDatabase)
         startLocation.setOnClickListener { view ->
-            setLocation(mDatabase)
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+            setLocation(buskViewModel.mDatabase)
+            buskViewModel.addUsers()
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -54,11 +61,25 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        mMap.setOnMarkerClickListener(this)
+        buskViewModel.map = mMap
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        mMap.setMinZoomPreference(7f)
+//        buskViewModel.scrollToCurrent()
+    }
+
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        if (p0?.tag == 1){
+            p0.tag = 0
+            startActivity(Intent(this@BuskActivity, ProfileActivity::class.java))
+        }else{
+            p0?.tag = 1
+        }
+        p0?.showInfoWindow()
+        return true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -85,13 +106,24 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
             val location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             val longitude = location.longitude
             val latitude = location.latitude
-            println(latitude)
-            println(longitude)
+            buskViewModel?.currentUser.location = (latitude.toString() + ":" + longitude.toString() )
             firebaseData
                     .child("users")
                     .child(getUid())
                     .child("location")
                     .setValue(latitude.toString() + ":" + longitude.toString() )
+            firebaseData
+                    .child("users")
+                    .child(getUid())
+                    .child("active")
+                    .setValue(buskViewModel?.currentUser.active.not() )
+            buskViewModel?.currentUser.active = buskViewModel?.currentUser.active.not()
+            when(buskViewModel?.currentUser.active){
+                true->startLocation.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
+                false->startLocation.setBackgroundTintList(ColorStateList.valueOf(Color.RED))
+            }
+            buskViewModel.scrollToCurrent()
+
         } else {
             println("hi")
             ActivityCompat.requestPermissions(this,
@@ -101,37 +133,37 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun getUsers(firebaseData: DatabaseReference) {
-//        val menuListener = object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                println(dataSnapshot)
-//                val user = dataSnapshot.getValue<User>(User::class.java) !!
-//                println(user)
-//            }
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                println("loadPost:onCancelled ${databaseError.toException()}")
-//            }
-//        }
-//        firebaseData.child("users").child(getUid()).addListenerForSingleValueEvent(menuListener)
-
-
-        val totalUsers = object : ValueEventListener {
+        val menuListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                println(dataSnapshot)
-                val users = mutableListOf<User>()
-                dataSnapshot.children.mapNotNullTo(users) { it.getValue<User>(User::class.java) }
-                println(users)
+                val user = dataSnapshot.getValue<User>(User::class.java) !!
+                buskViewModel.currentUser = user
+                setLocation(firebaseData)
+                buskViewModel.scrollToCurrent()
+
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 println("loadPost:onCancelled ${databaseError.toException()}")
             }
         }
-        firebaseData.child("users").addListenerForSingleValueEvent(totalUsers)
-//
-//        firebaseData
-//                .child("users")
-//                .child(getUid())
-//                .child("location")
-//                .setValue("your moms house")
+        firebaseData.child("users").child(getUid()).addListenerForSingleValueEvent(menuListener)
+
+
+        val totalUsers = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                println(dataSnapshot)
+                val users = mutableListOf<com.Team6.buski.quickstart.database.User>()
+                dataSnapshot.children.mapNotNullTo(users) { it.getValue<com.Team6.buski.quickstart.database.User>(User::class.java) }
+                buskViewModel.users = users
+                for ( i in dataSnapshot.children){
+                    print(i)
+                }
+                buskViewModel.addUsers()
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                println("loadPost:onCancelled ${databaseError.toException()}")
+            }
+        }
+        firebaseData.child("users").addValueEventListener(totalUsers)
     }
     fun getUid(): String {
         return FirebaseAuth.getInstance().currentUser!!.uid
