@@ -100,15 +100,13 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
     }
 
     private fun setLocation(firebaseData: DatabaseReference) {
-        buskViewModel.scrollToCurrent()
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
             val lm = getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             val longitude = location.longitude
             val latitude = location.latitude
-            println(latitude)
-            println(longitude)
+            buskViewModel?.currentUser.location = (latitude.toString() + ":" + longitude.toString() )
             firebaseData
                     .child("users")
                     .child(getUid())
@@ -124,6 +122,7 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
                 true->startLocation.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN))
                 false->startLocation.setBackgroundTintList(ColorStateList.valueOf(Color.RED))
             }
+            buskViewModel.scrollToCurrent()
 
         } else {
             println("hi")
@@ -138,7 +137,9 @@ class BuskActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMarker
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val user = dataSnapshot.getValue<User>(User::class.java) !!
                 buskViewModel.currentUser = user
+                setLocation(firebaseData)
                 buskViewModel.scrollToCurrent()
+
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 println("loadPost:onCancelled ${databaseError.toException()}")
